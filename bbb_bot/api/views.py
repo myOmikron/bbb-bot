@@ -25,7 +25,7 @@ class RCPSafeView(View):
         if not rc_protocol.validate_checksum(
             request=decoded,
             checksum=checksum,
-            shared_secret=settings.RCP_SECRET,
+            shared_secret=settings.SHARED_SECRET,
             salt=request.get_full_path().split("/")[-1],
             time_delta=settings.RCP_TIME_DELTA,
         ):

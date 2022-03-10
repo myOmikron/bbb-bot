@@ -1,4 +1,4 @@
 github.com/hellflame/argparse v1.7.4 h1:eEmgnNYPn/QX88RqIGorIZhilUsCm+9jLrooS+zWSyM=
 github.com/hellflame/argparse v1.7.4/go.mod h1:nOtOQAtkWh6u5msq6huJxZtjb+Yg9VeN0e7vRuBS49E=
-github.com/myOmikron/gorcp v0.0.0-20220310150901-5eca9936e595 h1:+V1YhCGakT+FHUPOErYMMIEr+uaYCJjrjHVyCGvQsyk=
-github.com/myOmikron/gorcp v0.0.0-20220310150901-5eca9936e595/go.mod h1:try3Mt6BuGYjmbbAo+Lmf6GCBX7NfFBpe7ACz3eDbhw=
+github.com/myOmikron/gorcp v0.0.0-20220310155149-c29c112ded56 h1:YYEiPu9Da1nyOs5W8GGNOlZkDHLM0/JvAayqsF6SqZc=
+github.com/myOmikron/gorcp v0.0.0-20220310155149-c29c112ded56/go.mod h1:try3Mt6BuGYjmbbAo+Lmf6GCBX7NfFBpe7ACz3eDbhw=

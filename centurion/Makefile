@@ -12,7 +12,7 @@ FILE_SUFFIX = go
 
 .PHONY: build
 build: clean
-	CGO_ENABLED=0 ${GO} build -ldflags=-w -o ${OUT_DIR} ${FILE_DIR}
+	CGO_ENABLED=0 ${GO} build -ldflags=-w -o ${OUT_DIR}/centurion ${FILE_DIR}
 
 .PHONY: clean
 clean:

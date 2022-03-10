@@ -11,10 +11,12 @@ Body data is encoded with json.
 
 **Parameter**:
 
-| Name       | Type | Description                                   |
-|------------|------|-----------------------------------------------|
-| sender     | bool | Specify True, if the bot should send audio    |
-| meeting_id | str  | Meeting ID of a running BigBlueButton meeting |
+| Name           | Type | Description                                    |
+|----------------|------|------------------------------------------------|
+| sender         | bool | Specify True, if the bot should send audio     |
+| meeting_id     | str  | Meeting ID of a running BigBlueButton meeting  |
+| bbb_server_uri | str  | Uri of the BBB Server (`bbb-conf --secret`)    |
+| bbb_secret     | str  | Secret of the BBB Server (`bbb-conf --secret`) |
 
 
 ### `/api/v1/stopAllBots`

@@ -35,10 +35,10 @@ class RCPSafeView(View):
 
 class StartBot(RCPSafeView):
     def safe_post(self, decoded, *args, **kwargs):
-        if "sender" not in decoded:
-            return JsonResponse({"success": False, "message": "Parameter sender is required, but missing"}, status=400)
-        if "meeting_id" not in decoded:
-            return JsonResponse({"success": False, "message": "Parameter meeting_id is required, but missing"}, status=400)
+        required = ["sender", "meeting_id", "bbb_server_uri", "bbb_secret"]
+        for x in required:
+            if x not in decoded:
+                return JsonResponse({"success": False, "message": f"Parameter {x} is missing"}, status=400)
         sender = decoded["sender"]
         if not isinstance(sender, bool):
             return JsonResponse({"success": False, "message": "Parameter sender must be a valid bool"}, status=400)

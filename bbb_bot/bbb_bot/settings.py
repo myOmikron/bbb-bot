@@ -20,12 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7-0t3x@t6_)$c4um@j^a%rhbk(6ied@wgc1c^ek45q8=tm&bqb'
+SECRET_KEY = 'CHANGE_ME'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+]
 
 
 # Application definition
@@ -125,5 +126,5 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # RCP
-SHARED_SECRET = ""
+SHARED_SECRET = 'CHANGE_ME'
 RCP_TIME_DELTA = 5

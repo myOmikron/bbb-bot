@@ -49,7 +49,7 @@ class StartBot(RCPSafeView):
 
         bot = Bot.objects.create()
         bot.pid = subprocess.Popen([
-            "python3", "bot_script.py",
+            "../venv/bin/python3", "bot_script.py",
             "--bbb-url", decoded["bbb_server_uri"],
             "--bbb-secret", decoded["bbb_secret"],
             "--meeting-id", decoded["meeting_id"],

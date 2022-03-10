@@ -35,11 +35,15 @@ def main():
     parser.add_argument("--join-params", default={}, type=json.loads,
                         help="Additional bbb join link parameters as json")
 
-    parser.add_argument("--log-level", default="INFO")
+    parser.add_argument("--log-level", default="INFO",
+                        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     args = parser.parse_args()
 
     # Setup logging
     logging.basicConfig(level=args.log_level)
+    if args.log_level == "DEBUG":
+        logging.getLogger("selenium").setLevel(logging.INFO)
+        logging.getLogger("urllib3").setLevel(logging.INFO)
 
     # Create bbb join link
     bbb = BigBlueButton(args.bbb_url, args.bbb_secret)

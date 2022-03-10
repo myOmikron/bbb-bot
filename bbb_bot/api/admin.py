@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from api.models import Bot
+
+
+@admin.register(Bot)
+class BotAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "pid")

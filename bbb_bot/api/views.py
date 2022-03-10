@@ -1,11 +1,14 @@
 import json
+import os
+import signal
+import subprocess
 
 import rc_protocol
 from django.core.handlers.wsgi import WSGIRequest
 from django.views import View
 from django.http import JsonResponse
 
-from api import models
+from api.models import Bot
 from bbb_bot import settings
 
 
@@ -39,18 +42,31 @@ class StartBot(RCPSafeView):
         for x in required:
             if x not in decoded:
                 return JsonResponse({"success": False, "message": f"Parameter {x} is missing"}, status=400)
+
         sender = decoded["sender"]
         if not isinstance(sender, bool):
             return JsonResponse({"success": False, "message": "Parameter sender must be a valid bool"}, status=400)
-        bot = models.Bot.objects.create()
-        # TODO: Start subprocess, gather pid
+
+        bot = Bot.objects.create()
+        bot.pid = subprocess.Popen([
+            "python3", "bot_script.py",
+            "--bbb-url", decoded["bbb_server_uri"],
+            "--bbb-secret", decoded["bbb_secret"],
+            "--meeting-id", decoded["meeting_id"],
+            "--bot", str(bot.id),
+            *(("--use-microphone",) if decoded["sender"] else ()),
+        ]).pid
         bot.save()
+
         return JsonResponse({"success": True})
 
 
 class StopAllBots(RCPSafeView):
     def safe_post(self, decoded, *args, **kwargs):
-        for x in models.Bot.objects.all():
-            # TODO: Stop subprocess
-            x.delete()
+        for bot in Bot.objects.all():
+            try:
+                os.kill(bot.pid, signal.SIGTERM)
+            except ProcessLookupError:  # Skip already stopped processes
+                pass
+        Bot.objects.all().delete()
         return JsonResponse({"success": True})

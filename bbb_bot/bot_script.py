@@ -23,7 +23,7 @@ def main():
 
     parser.add_argument("--meeting-id", required=True,
                         help="ID of BBB Meeting")
-    parser.add_argument("--meeting-password", required=True,
+    parser.add_argument("--meeting-password",
                         help="Password of BBB Meeting")
 
     parser.add_argument("--bbb-url", required=True,
@@ -48,6 +48,9 @@ def main():
 
     # Create bbb join link
     bbb = BigBlueButton(args.bbb_url, args.bbb_secret)
+    if not args.meeting_password:
+        logger.debug("Retrieving attendee password...")
+        args.meeting_password = bbb.get_meeting_info(args.meeting_id).get_meetinginfo().get_attendeepw()
     link = bbb.get_join_meeting_url(
         f"Bot {args.bot}",
         meeting_id=args.meeting_id,

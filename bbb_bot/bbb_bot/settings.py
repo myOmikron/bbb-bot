@@ -124,5 +124,6 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-RCP_SECRET = ""
+# RCP
+SHARED_SECRET = ""
 RCP_TIME_DELTA = 5

@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import signal
 import subprocess
 import time
 import uuid
@@ -68,6 +69,7 @@ def main():
 
     # Open browser and link
     options = ChromeOptions()
+    options.headless = True
     options.add_argument("--use-fake-ui-for-media-stream")  # Don't ask for microphone permissions
     options.add_argument("--use-fake-device-for-media-stream")  # Send random click noises to microphone
     browser = webdriver.Chrome(options=options)
@@ -96,7 +98,7 @@ def main():
         logger.debug("Clicking 'Listen only'...")
         browser.find_element(by=By.XPATH, value="//button[@aria-label='Listen only']").click()
 
-    logger.info(f"Joined meeting '{args.meeting_id}' with {'microphone' if args.use_microphone else 'audio'}")
+    logger.info(f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}")
 
     # Sleep on main thread
     try:
@@ -112,5 +114,10 @@ def main():
     logger.debug("Closed selenium")
 
 
+def sigterm2sigint(_signal, _frame):
+    raise KeyboardInterrupt
+
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, sigterm2sigint)
     main()

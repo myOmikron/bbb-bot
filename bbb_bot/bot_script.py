@@ -59,17 +59,6 @@ def main():
     )
     logger.debug(f"Generated join url: {link}")
 
-    # Test pulseaudio
-    for i in range(3):
-        p = subprocess.run("pulseaudio --check", shell=True)
-        if p.returncode != 0:
-            logger.error("Pulseaudio hasn't started yet. Starting it")
-            subprocess.run("pulseaudio --kill", shell=True)
-            subprocess.run("pulseaudio -D", shell=True)
-        else:
-            logger.info("Pulseaudio is already running.")
-            break
-
     # Open browser and link
     options = ChromeOptions()
     options.headless = True
@@ -115,6 +104,7 @@ def main():
     # Cleanup and quit
     browser.quit()
     logger.debug("Closed selenium")
+    quit(0)
 
 
 def sigterm2sigint(_signal, _frame):

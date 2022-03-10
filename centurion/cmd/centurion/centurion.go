@@ -62,7 +62,7 @@ func main() {
 	if err := parser.Parse(nil); err != nil {
 		fmt.Println(err.Error())
 	} else {
-		hc := http.Client{Timeout: 2}
+		hc := http.Client{Timeout: 2000}
 		switch {
 		case attackParser.Invoked:
 			requestMap := make(map[string]string)

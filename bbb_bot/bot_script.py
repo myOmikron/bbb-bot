@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import signal
 import subprocess
 import time
 import uuid
@@ -13,7 +14,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger()
 
 
 def main():
@@ -22,7 +23,7 @@ def main():
 
     parser.add_argument("--meeting-id", required=True,
                         help="ID of BBB Meeting")
-    parser.add_argument("--meeting-password", required=True,
+    parser.add_argument("--meeting-password",
                         help="Password of BBB Meeting")
 
     parser.add_argument("--bbb-url", required=True,
@@ -47,6 +48,9 @@ def main():
 
     # Create bbb join link
     bbb = BigBlueButton(args.bbb_url, args.bbb_secret)
+    if not args.meeting_password:
+        logger.debug("Retrieving attendee password...")
+        args.meeting_password = bbb.get_meeting_info(args.meeting_id).get_meetinginfo().get_attendeepw()
     link = bbb.get_join_meeting_url(
         f"Bot {args.bot}",
         meeting_id=args.meeting_id,
@@ -68,6 +72,7 @@ def main():
 
     # Open browser and link
     options = ChromeOptions()
+    options.headless = True
     options.add_argument("--use-fake-ui-for-media-stream")  # Don't ask for microphone permissions
     options.add_argument("--use-fake-device-for-media-stream")  # Send random click noises to microphone
     browser = webdriver.Chrome(options=options)
@@ -96,7 +101,7 @@ def main():
         logger.debug("Clicking 'Listen only'...")
         browser.find_element(by=By.XPATH, value="//button[@aria-label='Listen only']").click()
 
-    logger.info(f"Joined meeting '{args.meeting_id}' with {'microphone' if args.use_microphone else 'audio'}")
+    logger.info(f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}")
 
     # Sleep on main thread
     try:
@@ -112,5 +117,10 @@ def main():
     logger.debug("Closed selenium")
 
 
+def sigterm2sigint(_signal, _frame):
+    raise KeyboardInterrupt
+
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, sigterm2sigint)
     main()

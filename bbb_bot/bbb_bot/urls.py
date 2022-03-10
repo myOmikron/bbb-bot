@@ -20,4 +20,5 @@ from api.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/startBot', StartBot.as_view()),
+    path('api/v1/stopAllBots', StopAllBots.as_view()),
 ]

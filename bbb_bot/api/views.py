@@ -5,6 +5,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.views import View
 from django.http import JsonResponse
 
+from api import models
 from bbb_bot import settings
 
 
@@ -34,4 +35,22 @@ class RCPSafeView(View):
 
 class StartBot(RCPSafeView):
     def safe_post(self, decoded, *args, **kwargs):
+        if "sender" not in decoded:
+            return JsonResponse({"success": False, "message": "Parameter sender is required, but missing"}, status=400)
+        if "meeting_id" not in decoded:
+            return JsonResponse({"success": False, "message": "Parameter meeting_id is required, but missing"}, status=400)
+        sender = decoded["sender"]
+        if not isinstance(sender, bool):
+            return JsonResponse({"success": False, "message": "Parameter sender must be a valid bool"}, status=400)
+        bot = models.Bot.objects.create()
+        # TODO: Start subprocess, gather pid
+        bot.save()
+        return JsonResponse({"success": True})
+
+
+class StopAllBots(RCPSafeView):
+    def safe_post(self, decoded, *args, **kwargs):
+        for x in models.Bot.objects.all():
+            # TODO: Stop subprocess
+            x.delete()
         return JsonResponse({"success": True})

@@ -17,6 +17,7 @@ logger = logging.getLogger()
 
 
 def main():
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument("--bot", metavar="name", default=uuid.uuid4())
 
@@ -95,7 +96,9 @@ def main():
         browser.find_element(by=By.XPATH, value="//button[@aria-label='Listen only']").click()
 
     logger.info(
-        f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}")
+        f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}."
+        f"It took {time.time() - start_time:.1f} seconds."
+    )
 
     # Sleep on main thread
     try:

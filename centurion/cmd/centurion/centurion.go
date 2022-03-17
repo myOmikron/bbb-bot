@@ -77,7 +77,7 @@ func main() {
 
 			for i := 0; i < *armySize; i++ {
 				if i%len(config.CenturiaUris) == 0 {
-					time.Sleep(time.Millisecond * 250)
+					time.Sleep(time.Second * 5)
 				}
 
 				if i >= *armySize-*senderCount {

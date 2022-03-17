@@ -57,6 +57,10 @@ func main() {
 	attackParser := parser.AddCommand("attack", "Start the attack", nil)
 	armySize := attackParser.Int("", "armySize", &argparse.Option{Positional: true, Required: true})
 	senderCount := attackParser.Int("", "sender-count", &argparse.Option{Default: "2"})
+	timeout := attackParser.Int("", "timeout", &argparse.Option{
+		Default: "5000",
+		Help:    "Timeout in ms",
+	})
 
 	withdrawParser := parser.AddCommand("withdraw", "Withdraw the attack", &argparse.ParserConfig{
 		DisableDefaultShowHelp: true,
@@ -77,7 +81,7 @@ func main() {
 
 			for i := 0; i < *armySize; i++ {
 				if i%len(config.CenturiaUris) == 0 {
-					time.Sleep(time.Second * 5)
+					time.Sleep(time.Millisecond * time.Duration(*timeout))
 				}
 
 				if i >= *armySize-*senderCount {

@@ -127,9 +127,14 @@ func main() {
 					return
 				} else {
 					if body, err := hc.Post(c+"/api/v1/stopAllBots", "application/json", bytes.NewReader(marshal)); err != nil {
-						fmt.Printf("StatusCode: %d : %s\n", body.StatusCode, body.Status)
-						fmt.Println(ioutil.ReadAll(body.Body))
+						fmt.Println(err.Error())
 						os.Exit(1)
+					} else {
+						if body.StatusCode != 200 {
+							fmt.Printf("StatusCode: %d : %s\n", body.StatusCode, body.Status)
+							fmt.Println(ioutil.ReadAll(body.Body))
+							os.Exit(1)
+						}
 					}
 				}
 			}

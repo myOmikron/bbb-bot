@@ -80,6 +80,8 @@ func main() {
 
 				if i < *senderCount {
 					requestMap["sender"] = true
+				} else {
+					requestMap["sender"] = false
 				}
 				delete(requestMap, "checksum")
 				checksum := gorcp.GetChecksum(&requestMap, "startBot", rcpConfig)

@@ -117,6 +117,21 @@ func main() {
 			fmt.Printf("Spawned %d soldiers in meeting %s\n", *armySize, "test")
 
 		case withdrawParser.Invoked:
+			for _, c := range config.CenturiaUris {
+				m := make(map[string]interface{}, 0)
+				checksum := gorcp.GetChecksum(&m, "stopAllBots", rcpConfig)
+
+				if marshal, err := json.Marshal(&checksum); err != nil {
+					return
+				} else {
+					if body, err := hc.Post(c+"/api/v1/stopAllBots", "application/json", bytes.NewReader(marshal)); err != nil {
+						fmt.Printf("StatusCode: %d : %s\n", body.StatusCode, body.Status)
+						fmt.Println(ioutil.ReadAll(body.Body))
+						os.Exit(1)
+					}
+				}
+			}
+			fmt.Println("Army has withdrawn")
 		}
 	}
 }

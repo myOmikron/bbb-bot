@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 )
 
 type Config struct {
@@ -62,7 +63,8 @@ func main() {
 	if err := parser.Parse(nil); err != nil {
 		fmt.Println(err.Error())
 	} else {
-		hc := http.Client{Timeout: 2}
+		hc := http.Client{Timeout: time.Second * 2}
+		defer hc.CloseIdleConnections()
 		switch {
 		case attackParser.Invoked:
 			requestMap := make(map[string]string)
@@ -76,6 +78,7 @@ func main() {
 					requestMap["sender"] = "true"
 				}
 				checksum := gorcp.GetChecksum(&requestMap, "startBot", rcpConfig)
+				fmt.Println("Checksum", checksum)
 				requestMap["checksum"] = checksum
 				if requestBody, err := json.Marshal(requestMap); err != nil {
 					fmt.Println(err.Error())
@@ -88,16 +91,19 @@ func main() {
 						os.Exit(1)
 					} else {
 						if post.StatusCode != 200 {
-							var body []byte
-							_, err := post.Body.Read(body)
+							fmt.Printf("Status: %d\n", post.StatusCode)
+							body, err := ioutil.ReadAll(post.Body)
 							if err != nil {
-								break
+								fmt.Println("\nCouldn't read body, exiting ...")
+								os.Exit(1)
 							}
 							var res []interface{}
 							if err := json.Unmarshal(body, &res); err != nil {
-								break
+								fmt.Println(string(body))
+								os.Exit(1)
 							}
-							fmt.Printf("Status: %d: %v\n", post.StatusCode, res)
+							fmt.Printf("%v\n", res)
+							os.Exit(1)
 						}
 					}
 				}

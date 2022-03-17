@@ -81,8 +81,8 @@ func main() {
 				if i < *senderCount {
 					requestMap["sender"] = true
 				}
+				delete(requestMap, "checksum")
 				checksum := gorcp.GetChecksum(&requestMap, "startBot", rcpConfig)
-				fmt.Println("Checksum", checksum)
 				requestMap["checksum"] = checksum
 				if requestBody, err := json.Marshal(requestMap); err != nil {
 					fmt.Println(err.Error())

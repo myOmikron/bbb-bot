@@ -23,8 +23,6 @@ def main():
 
     parser.add_argument("--meeting-id", required=True,
                         help="ID of BBB Meeting")
-    parser.add_argument("--meeting-password",
-                        help="Password of BBB Meeting")
 
     parser.add_argument("--bbb-url", required=True,
                         help="BBB's url (see `bbb-conf --secret`)")
@@ -48,13 +46,19 @@ def main():
 
     # Create bbb join link
     bbb = BigBlueButton(args.bbb_url, args.bbb_secret)
-    if not args.meeting_password:
-        logger.debug("Retrieving attendee password...")
-        args.meeting_password = bbb.get_meeting_info(args.meeting_id).get_meetinginfo().get_attendeepw()
+    try:
+        logger.debug("Retrieving meeting...")
+        meeting_password = bbb.get_meeting_info(args.meeting_id).get_meetinginfo().get_attendeepw()
+    except:
+        logger.debug("Got exception -> assuming the meeting doesn't exist")
+        logger.info("Creating a new meeting...")
+        meeting_password = bbb.create_meeting(args.meeting_id, {
+            "name": "Battleground",
+        }).get_attendee_pw()
     link = bbb.get_join_meeting_url(
         f"Bot {args.bot}",
         meeting_id=args.meeting_id,
-        password=args.meeting_password,
+        password=meeting_password,
         params=args.join_params
     )
     logger.debug(f"Generated join url: {link}")
@@ -90,7 +94,8 @@ def main():
         logger.debug("Clicking 'Listen only'...")
         browser.find_element(by=By.XPATH, value="//button[@aria-label='Listen only']").click()
 
-    logger.info(f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}")
+    logger.info(
+        f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}")
 
     # Sleep on main thread
     try:

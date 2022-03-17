@@ -80,7 +80,7 @@ func main() {
 					time.Sleep(time.Millisecond * 250)
 				}
 
-				if i < *senderCount {
+				if i >= *armySize-*senderCount {
 					requestMap["sender"] = true
 				} else {
 					requestMap["sender"] = false

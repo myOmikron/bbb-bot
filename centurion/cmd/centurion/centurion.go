@@ -122,8 +122,8 @@ func main() {
 			for _, c := range config.CenturiaUris {
 				m := make(map[string]interface{}, 0)
 				checksum := gorcp.GetChecksum(&m, "stopAllBots", rcpConfig)
-
-				if marshal, err := json.Marshal(&checksum); err != nil {
+				m["checksum"] = checksum
+				if marshal, err := json.Marshal(&m); err != nil {
 					return
 				} else {
 					if post, err := hc.Post(c+"/api/v1/stopAllBots", "application/json", bytes.NewReader(marshal)); err != nil {

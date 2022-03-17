@@ -92,8 +92,8 @@ func main() {
 					} else {
 						if post.StatusCode != 200 {
 							fmt.Printf("Status: %d\n", post.StatusCode)
-							var body []byte
-							if _, err := post.Body.Read(body); err != nil {
+							body, err := ioutil.ReadAll(post.Body)
+							if err != nil {
 								fmt.Println("\nCouldn't read body, exiting ...")
 								os.Exit(1)
 							}

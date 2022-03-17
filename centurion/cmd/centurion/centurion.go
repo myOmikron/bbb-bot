@@ -126,13 +126,23 @@ func main() {
 				if marshal, err := json.Marshal(&checksum); err != nil {
 					return
 				} else {
-					if body, err := hc.Post(c+"/api/v1/stopAllBots", "application/json", bytes.NewReader(marshal)); err != nil {
+					if post, err := hc.Post(c+"/api/v1/stopAllBots", "application/json", bytes.NewReader(marshal)); err != nil {
 						fmt.Println(err.Error())
 						os.Exit(1)
 					} else {
-						if body.StatusCode != 200 {
-							fmt.Printf("StatusCode: %d : %s\n", body.StatusCode, body.Status)
-							fmt.Println(ioutil.ReadAll(body.Body))
+						if post.StatusCode != 200 {
+							fmt.Printf("Status: %d\n", post.StatusCode)
+							body, err := ioutil.ReadAll(post.Body)
+							if err != nil {
+								fmt.Println("\nCouldn't read body, exiting ...")
+								os.Exit(1)
+							}
+							var res []interface{}
+							if err := json.Unmarshal(body, &res); err != nil {
+								fmt.Println(string(body))
+								os.Exit(1)
+							}
+							fmt.Printf("%v\n", res)
 							os.Exit(1)
 						}
 					}

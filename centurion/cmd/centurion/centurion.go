@@ -74,8 +74,12 @@ func main() {
 			requestMap["bbb_secret"] = config.BBBSecret
 
 			for i := 0; i < *armySize; i++ {
+				if i%len(config.CenturiaUris) == 0 {
+					time.Sleep(time.Millisecond * 250)
+				}
+
 				if i < *senderCount {
-					requestMap["sender"] = "true"
+					requestMap["sender"] = true
 				}
 				checksum := gorcp.GetChecksum(&requestMap, "startBot", rcpConfig)
 				fmt.Println("Checksum", checksum)

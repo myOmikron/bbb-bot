@@ -58,7 +58,9 @@ func main() {
 	armySize := attackParser.Int("", "armySize", &argparse.Option{Positional: true, Required: true})
 	senderCount := attackParser.Int("", "sender-count", &argparse.Option{Default: "2"})
 
-	withdrawParser := parser.AddCommand("withdraw", "Withdraw the attack", nil)
+	withdrawParser := parser.AddCommand("withdraw", "Withdraw the attack", &argparse.ParserConfig{
+		DisableDefaultShowHelp: true,
+	})
 
 	if err := parser.Parse(nil); err != nil {
 		fmt.Println(err.Error())

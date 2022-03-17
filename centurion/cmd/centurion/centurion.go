@@ -64,6 +64,7 @@ func main() {
 		fmt.Println(err.Error())
 	} else {
 		hc := http.Client{Timeout: time.Second * 2}
+		defer hc.CloseIdleConnections()
 		switch {
 		case attackParser.Invoked:
 			requestMap := make(map[string]string)
@@ -90,17 +91,19 @@ func main() {
 						os.Exit(1)
 					} else {
 						if post.StatusCode != 200 {
-							fmt.Printf("Status: %d: ", post.StatusCode)
+							fmt.Printf("Status: %d\n", post.StatusCode)
 							var body []byte
-							_, err := post.Body.Read(body)
-							if err != nil {
-								break
+							if _, err := post.Body.Read(body); err != nil {
+								fmt.Println("\nCouldn't read body, exiting ...")
+								os.Exit(1)
 							}
 							var res []interface{}
 							if err := json.Unmarshal(body, &res); err != nil {
-								break
+								fmt.Println(string(body))
+								os.Exit(1)
 							}
 							fmt.Printf("%v\n", res)
+							os.Exit(1)
 						}
 					}
 				}

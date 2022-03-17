@@ -72,8 +72,9 @@ def main():
     browser.get(link)
 
     # Little shorthand function
-    def wait_for_xpath(xpath, timeout=60):
-        WebDriverWait(browser, timeout).until(expected_conditions.visibility_of_element_located((By.XPATH, xpath)))
+    def wait_for_xpath(xpath, timeout=60, poll_frequency=10):
+        WebDriverWait(browser, timeout, poll_frequency=poll_frequency) \
+            .until(expected_conditions.visibility_of_element_located((By.XPATH, xpath)))
 
     # Joining audio
     logger.debug("Waiting for audio modal...")

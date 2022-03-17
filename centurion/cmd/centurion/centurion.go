@@ -67,8 +67,8 @@ func main() {
 		defer hc.CloseIdleConnections()
 		switch {
 		case attackParser.Invoked:
-			requestMap := make(map[string]string)
-			requestMap["sender"] = "false"
+			requestMap := make(map[string]interface{})
+			requestMap["sender"] = false
 			requestMap["meeting_id"] = "test"
 			requestMap["bbb_server_uri"] = config.BBBServerUri
 			requestMap["bbb_secret"] = config.BBBSecret

@@ -21,21 +21,30 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--bot", metavar="name", default=uuid.uuid4())
 
-    parser.add_argument("--meeting-id", required=True,
+    parser.add_argument("--meeting-id",
+                        required=True,
                         help="ID of BBB Meeting")
 
-    parser.add_argument("--bbb-url", required=True,
+    parser.add_argument("--bbb-url",
+                        required=True,
                         help="BBB's url (see `bbb-conf --secret`)")
-    parser.add_argument("--bbb-secret", required=True,
+    parser.add_argument("--bbb-secret",
+                        required=True,
                         help="BBB's shared secret (see `bbb-conf --secret`)")
 
-    parser.add_argument("--use-microphone", action="store_true",
-                        help="Use chromium's fake device flag to send clicking noises.")
-    parser.add_argument("--join-params", default={}, type=json.loads,
+    parser.add_argument(
+        "--use-microphone",
+        action="store_true",
+        help="Use chromium's fake device flag to send clicking noises.")
+    parser.add_argument("--join-params",
+                        default={},
+                        type=json.loads,
                         help="Additional bbb join link parameters as json")
 
-    parser.add_argument("--log-level", default="INFO",
-                        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     args = parser.parse_args()
 
     # Setup logging
@@ -48,26 +57,28 @@ def main():
     bbb = BigBlueButton(args.bbb_url, args.bbb_secret)
     try:
         logger.debug("Retrieving meeting...")
-        meeting_password = bbb.get_meeting_info(args.meeting_id).get_meetinginfo().get_attendeepw()
+        meeting_password = bbb.get_meeting_info(
+            args.meeting_id).get_meetinginfo().get_attendeepw()
     except:
         logger.debug("Got exception -> assuming the meeting doesn't exist")
         logger.info("Creating a new meeting...")
         meeting_password = bbb.create_meeting(args.meeting_id, {
             "name": "Battleground",
+            "record": True
         }).get_attendee_pw()
-    link = bbb.get_join_meeting_url(
-        f"Bot {args.bot}",
-        meeting_id=args.meeting_id,
-        password=meeting_password,
-        params=args.join_params
-    )
+    link = bbb.get_join_meeting_url(f"Bot {args.bot}",
+                                    meeting_id=args.meeting_id,
+                                    password=meeting_password,
+                                    params=args.join_params)
     logger.debug(f"Generated join url: {link}")
 
     # Open browser and link
     options = ChromeOptions()
     options.headless = True
-    options.add_argument("--use-fake-ui-for-media-stream")  # Don't ask for microphone permissions
-    options.add_argument("--use-fake-device-for-media-stream")  # Send random click noises to microphone
+    options.add_argument("--use-fake-ui-for-media-stream"
+                         )  # Don't ask for microphone permissions
+    options.add_argument("--use-fake-device-for-media-stream"
+                         )  # Send random click noises to microphone
     browser = webdriver.Chrome(options=options)
     logger.debug("Started selenium")
     browser.get(link)
@@ -83,22 +94,25 @@ def main():
 
     if args.use_microphone:
         logger.debug("Clicking 'Microphone'...")
-        browser.find_element(by=By.XPATH, value="//button[@aria-label='Microphone']").click()
+        browser.find_element(
+            by=By.XPATH, value="//button[@aria-label='Microphone']").click()
 
         logger.debug("Waiting for echo test...")
         wait_for_xpath("//button[@aria-label='Echo is audible']")
 
         logger.debug("Clicking 'Echo is audible'...")
-        browser.find_element(by=By.XPATH, value="//button[@aria-label='Echo is audible']").click()
+        browser.find_element(
+            by=By.XPATH,
+            value="//button[@aria-label='Echo is audible']").click()
 
     else:
         logger.debug("Clicking 'Listen only'...")
-        browser.find_element(by=By.XPATH, value="//button[@aria-label='Listen only']").click()
+        browser.find_element(
+            by=By.XPATH, value="//button[@aria-label='Listen only']").click()
 
     logger.info(
         f"Joined meeting '{args.meeting_id}' as '{args.bot}' with {'microphone' if args.use_microphone else 'audio'}."
-        f"It took {time.time() - start_time:.1f} seconds."
-    )
+        f"It took {time.time() - start_time:.1f} seconds.")
 
     # Sleep on main thread
     try:
